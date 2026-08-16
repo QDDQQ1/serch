@@ -1,0 +1,70 @@
+import os,threading,random,re,time,sys;from base64 import b64encode
+try:import requests;from faker import Faker
+except:os.system("pip install requests faker");import requests;from faker import Faker
+ses=input("Enter Your SessionID : ")
+if not ses:exit('Please Enter Sessionid')
+user_id=re.match(r"(\d+)",ses).group(1)
+Actok=b64encode(f'{{"ds_user_id":"{user_id}","sessionid":"{ses}"}}'.encode('utf-8'))
+fakers=[]
+for lang in ['ar_AE','ar_EG','ar_JO','ar_MA','ar_SA','ar_TN','ar_PS','bg_BG','bn_BD','ca_ES','cs_CZ','da_DK','de_AT','de_CH','de_DE','el_GR','en_AU','en_CA','en_GB','en_IE','en_IN','en_NZ','en_PH','en_US','en_ZA','es_AR','es_CO','es_CR','es_DO','es_EC','es_ES','es_GT','es_HN','es_MX','es_NI','es_PA','es_PE','es_PR','es_PY','es_SV','es_UY','es_VE','et_EE','fa_IR','fi_FI','fr_BE','fr_CA','fr_CH','fr_FR','gl_ES','gu_IN','he_IL','hi_IN','hr_HR','hu_HU','hy_AM','id_ID','is_IS','it_CH','it_IT','ja_JP','ka_GE','kk_KZ','km_KH','kn_IN','ko_KR','ky_KG','lt_LT','lv_LV','mk_MK','ml_IN','mn_MN','mr_IN','ms_MY','mt_MT','nb_NO','ne_NP','nl_BE','nl_NL','pa_IN','pl_PL','pt_BR','pt_PT','ro_RO','ru_RU','si_LK','sk_SK','sl_SI','sq_AL','sr_RS','sv_SE','sw_KE','ta_IN','te_IN','th_TH','tr_TR','uk_UA','ur_PK','uz_UZ','vi_VN','zh_CN','zh_TW']:
+ try:fakers.append(Faker(lang))
+ except:pass
+headers={'User-Agent':"Instagram 368.0.0.45.96 Android (30/11; 440dpi; 1080x2220; Xiaomi/Redmi; 23127PN0CC; begonia; mt6785; ar_EG; 700073482)",'x-bloks-version-id':"dbfb0f84b6481f4ec0a033d7947fb45db546b8cee18dde220c4c1eefd3bb3dcb",'authorization':f"Bearer IGT:2:{Actok.decode('utf-8')}",'x-ig-app-id':"567067343352427"}
+AllEmail=set();done=0;start=time.time()
+def show():
+ global done
+ stats=f"""\033[37m━━━━━━━━━━━━━━━━━━━
+\033[36mElapsed : {int(time.time()-start)}s
+\033[37m━━━━━━━━━━━━━━━━━━━
+\033[32mGeT  : {done}
+\033[31mFile : username.txt
+\033[37m━━━━━━━━━━━━━━━━━━━
+\033[32mDev : \033[33moo22bb
+\033[37m━━━━━━━━━━━━━━━━━━━\033[0m"""
+ sys.stdout.write('\033[H\033[J'+stats);sys.stdout.flush()
+def save_username(username):
+ with open('username.txt','a',encoding='utf-8')as f:f.write(username+'\n')
+def more_page(params,pag,ran):
+ global done
+ while True:
+  try:
+   params.update({'next_max_id':pag,'rank_token':ran,'page_token':pag})
+   response=requests.get("https://i.instagram.com/api/v1/fbsearch/account_serp/",params=params,headers=headers)
+   TnT=response.json()
+   usernames=[user['username']for user in TnT.get('users',[])]
+   for username in usernames:
+    if username not in AllEmail:
+     AllEmail.add(username);done+=1;show();save_username(username)
+   if TnT.get('has_more'):
+    ran=TnT.get("rank_token");pag=TnT.get("page_token")
+   else:break
+  except:break
+def search():
+ global done
+ while True:
+  try:
+   kill=random.choice(['دجحخهعغفقثصضشسيبلاتنمكطظزوةىلؤءئ','1234567890azertyuiopmlkjhgfdsqwxcvbn','アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン','あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん','ABCÇDEFGĞHIİJKLMNOÖPRSŞTÜVYZ','АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ','अआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसहक्षत्रज्ञ','ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی','กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรฤฤลฦวศษสหฬอฮ','ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ','ğüişöçñäüğüişöçñäüğüişöçñäüqw.ertyuiopasdfghjklzxcvbnm','abcdefghijklmnopqrstuvwxyzéèêëàâäôùûüîïç','абвгдеёжзийклмнопрстуфхцчшщъыьэюя','的一是不了人我在有他这为之大来以个中上们到说时国和地要就出会可也你对生能而子那得于着下自之','אבגדהוזחטיכלמנסעפצקרשת','αβγδεζηθικλμνξοπρστυφχψω','ضصثقفغعهخحجطكمنتالبيسشءذؤرىةوزظد','qwertyuioplkjhgfdsazxcvbnm','plmnjkoiuytrewqasdfghjbvcxz','zxcvbnmasdfghjklqwertyuiop','1234567890asdfghjklmnbvcxzqwertyuiop','mnbvcxzasdfghjklpoiuytrewq1478096523'])
+   key=''.join((random.choice(kill)for _ in range(random.randrange(3,15))))
+   rng=int("".join(random.choice("6789")for _ in range(1)))
+   name="".join(random.choice("1234567890qwertyuiopasdfghjklzxcvbnm.")for _ in range(rng))
+   if fakers:
+    faker=random.choice(fakers)
+    usery=random.choice([name,key,faker.name(),faker.user_name()])
+   else:usery=random.choice([name,key])
+   params={'search_surface':"user_serp",'timezone_offset':"10800",'enable_metadata':"false",'count':"30",'query':usery,'disable_ads':"false"}
+   response=requests.get("https://i.instagram.com/api/v1/fbsearch/account_serp/",params=params,headers=headers)
+   TnT=response.json()
+   usernames=[user['username']for user in TnT.get('users',[])]
+   for username in usernames:
+    if username not in AllEmail:
+     AllEmail.add(username);done+=1;show();save_username(username)
+   if TnT.get('has_more'):
+    ran=TnT.get("rank_token");pag=TnT.get("page_token")
+    more_page(params,pag,ran)
+  except:pass
+show()
+threads=[]
+for i in range(10):
+ t=threading.Thread(target=search)
+ threads.append(t);t.start()
+for t in threads:t.join()
